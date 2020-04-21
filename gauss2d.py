@@ -21,7 +21,7 @@ def gaussienne_2d(x, y, mx, my, sx, sy):
     return a * exp(b)
 
 def find_extremum2(tab, pas, x, y):
-    while(tab[x][y]<tab[x+1][y] or tab[x][y]<tab[x-1][y] or tab[x][y]<tab[x][y+1] or tab[x][y]<tab[x][y-1]):
+    while True:
         if tab[x][y]<tab[x+1][y]:
             x+=1
         elif tab[x][y]<tab[x-1][y]:
@@ -30,6 +30,8 @@ def find_extremum2(tab, pas, x, y):
             y+=1
         elif tab[x][y]<tab[x][y-1]:
             y-=1
+        else:
+            break
     return (y*pas-10, x*pas-10)
 
 # Fonction trouvant un extremum au sein du tableau
