@@ -75,7 +75,7 @@ bassins = [[ 0.0 ]*nbx for j in range(nby)]
 
 # Mise en place de l'ensemble contenant les extrema futurs pour x et y
 extr = {*()}
-max_iter = 80
+max_iter = 100
 
 # Mise en place des valeurs ainsi que des listes necessaires a la creation de multiples gaussienne 2-dimensionelles
 nb_gaussiennes = 10
