@@ -105,12 +105,13 @@ for i in range(nbx):
         ex,ey = find_extremum(tableau,pas,i,j)
         extr.add((ex,ey))
 
+# Conversion de l'ensemble des extrema en listes dans le but de pouvoir colorer les bassins d'attraction selon l'index de l'extremum
 x_extr, y_extr = [], []
 for x,y in extr:
     x_extr.append(x)
     y_extr.append(y)
 
-# Ajout des bassins
+# Ici on attribue une valeur respective a chaque point de la liste "bassins" dependant du bassin d'attraction de quel extremum ils appartiennent
 for i in range(nbx):
     for j in range(nby):
         val = 0
