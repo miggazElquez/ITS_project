@@ -70,7 +70,7 @@ tableau = [[ 0.0 ]*nbx for j in range(nby)]
 
 # Mise en place de l'ensemble contenant les extrema futurs pour x et y
 
-extr = {*()}
+extr = {}
 
 
 # Mise en place des valeurs ainsi que des listes necessaires a la creation de multiples gaussienne 2-dimensionelles
@@ -95,15 +95,21 @@ for k in range(nb_gaussiennes):
             tableau[i][j] += gaussienne_2d( xmin+i*pas, ymin + j*pas, mx[k], my[k], sx[k], sy[k] )
 
 
-# Ici, on ajoute à l'ensemble des extrema en x et y des extrema generes a partir du tableau
+# Ici, on ajoute au dictionnaire des extrema en x et y des extrema generes a partir du tableau
 #ex,ey = find_extremum(tableau, 0, nbx, 0, nby, 4, 4)
 for i in range(nbx):
     for j in range(nby):
         ex,ey = find_extremum2(tableau,pas,i,j)
-        extr.add((ex,ey))
+        if (ex,ey) in extr:
+            extr[(ex,ey)][0].append(i)
+            extr[(ex,ey)][1].append(j)
+        else:
+            extr[(ex,ey)] = ([i],[j])
 
+COLORS = ["green", "cyan","salmon"]
+colors = iter(COLORS)
 
-
+color = {key:next(colors) for key in extr}
 
 
 # Finalement, matplotlib est employe dans le but d'afficher les resultats a l'ecran
@@ -115,8 +121,9 @@ plt.imshow(tableau, extent=[xmin, xmax, ymin, ymax], origin="lower", cmap='Blues
 plt.colorbar()
 
 # Affichage des extrema
-for x_extr, y_extr in extr:
+for (x_extr, y_extr),(x_bassin,y_bassin) in extr.items():
     plt.plot(x_extr, y_extr,'ro', label='extrema')
+    plt.plot(x_bassin, y_bassin,color[(x_extr,y_extr)])
 
 # Affichage des bassins d'attraction
 #plt.imshow(tableau, extent=[xmin, xmax, ymin, ymax], origin='lower', cmap='RdGy', alpha=1.5)
