@@ -38,8 +38,7 @@ def find_extremum(tab, pas, x, y):
     return (y*pas-10, x*pas-10)
 
 # Fonction trouvant un extremum au sein du tableau avec un nb maximum d'iteration possibles
-def find_extremum_iter(tab, pas, x, y):
-    max_iter = 80
+def find_extremum_iter(tab, pas, x, y, max_iter):
     i = 0
     x_max = len(tab) - 1
     y_max = len(tab[0]) - 1
@@ -76,6 +75,7 @@ bassins = [[ 0.0 ]*nbx for j in range(nby)]
 
 # Mise en place de l'ensemble contenant les extrema futurs pour x et y
 extr = {*()}
+max_iter = 80
 
 # Mise en place des valeurs ainsi que des listes necessaires a la creation de multiples gaussienne 2-dimensionelles
 nb_gaussiennes = 10
@@ -115,7 +115,7 @@ for x,y in extr:
 for i in range(nbx):
     for j in range(nby):
         val = 0
-        ex,ey = find_extremum_iter(tableau,pas,i,j)
+        ex,ey = find_extremum_iter(tableau,pas,i,j, max_iter)
         for k,(x,y) in enumerate(extr):
             if abs(x - ex)<0.00001  and abs(y - ey)<0.00001:
                 val = 100 * (k+1)
