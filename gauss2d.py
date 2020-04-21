@@ -19,7 +19,7 @@ def gaussienne_2d(x, y, mx, my, sx, sy):
     b = (-1/2) *( ( (x-mx)/sx )**2 + ( (y-my)/sy )**2 )
     #b = -( ( (x-mx)/sx )**2 + ( (y-my)/sy )**2 )
     return a * exp(b)
-
+ 
 def find_extremum2(tab, pas, x, y):
     while True:
         if tab[x][y]<tab[x+1][y]:
