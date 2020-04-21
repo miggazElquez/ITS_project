@@ -75,8 +75,7 @@ tableau = [[ 0.0 ]*nbx for j in range(nby)]
 bassins = [[ 0.0 ]*nbx for j in range(nby)]
 
 # Mise en place de l'ensemble contenant les extrema futurs pour x et y
-x_extr = []
-y_extr = []
+extr = {*()}
 
 # Mise en place des valeurs ainsi que des listes necessaires a la creation de multiples gaussienne 2-dimensionelles
 nb_gaussiennes = 8
@@ -104,15 +103,19 @@ for k in range(nb_gaussiennes):
 for i in range(nbx):
     for j in range(nby):
         ex,ey = find_extremum(tableau,pas,i,j)
-        x_extr.append(ex)
-        y_extr.append(ey)
+        extr.add((ex,ey))
+
+x_extr, y_extr = [], []
+for x,y in extr:
+    x_extr.append(x)
+    y_extr.append(y)
 
 for i in range(nbx):
     for j in range(nby):
         val = 0
         ex,ey = find_extremum_iter(tableau,pas,i,j)
-        for k in range(len(x_extr)):
-            if abs(x_extr[k] - ex)<0.00001  and abs(y_extr[k] - ey)<0.00001:
+        for k,(x,y) in enumerate(extr):
+            if abs(x - ex)<0.00001  and abs(y - ey)<0.00001:
                 val = 100 * (k+1)
                 break
         bassins[i][j] = val
@@ -131,7 +134,9 @@ plt.plot(x_extr, y_extr,'ro', label='extrema')
 # Affichage des bassins d'attraction
 plt.imshow(bassins, extent=[xmin, xmax, ymin, ymax], origin='lower', cmap='gray', alpha=1.5)
 
+print(set(i for j in bassins for i in j))
 
 # Executer Matplotlib
 plt.legend()
 plt.show()
+
