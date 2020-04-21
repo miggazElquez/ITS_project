@@ -21,14 +21,16 @@ def gaussienne_2d(x, y, mx, my, sx, sy):
     return a * exp(b)
  
 def find_extremum2(tab, pas, x, y):
+    x_max = len(tab) - 1
+    y_max = len(tab[0]) - 1
     while True:
-        if tab[x][y]<tab[x+1][y]:
+        if x < x_max and tab[x][y]<tab[x+1][y]:
             x+=1
-        elif tab[x][y]<tab[x-1][y]:
+        elif x > 0 and tab[x][y]<tab[x-1][y]:
             x-=1
-        elif tab[x][y]<tab[x][y+1]:
+        elif y < y_max and tab[x][y]<tab[x][y+1]:
             y+=1
-        elif tab[x][y]<tab[x][y-1]:
+        elif y > 0 and tab[x][y]<tab[x][y-1]:
             y-=1
         else:
             break
@@ -72,7 +74,7 @@ extr = {*()}
 
 
 # Mise en place des valeurs ainsi que des listes necessaires a la creation de multiples gaussienne 2-dimensionelles
-nb_gaussiennes = 1
+nb_gaussiennes = 2
 # Creation de positions aleatoires de gaussiennes
 mx = [ randint(xmin,xmax)/2 for i in range(nb_gaussiennes) ]
 my = [ randint(ymin,ymax)/2 for i in range(nb_gaussiennes) ]
@@ -95,8 +97,10 @@ for k in range(nb_gaussiennes):
 
 # Ici, on ajoute à l'ensemble des extrema en x et y des extrema generes a partir du tableau
 #ex,ey = find_extremum(tableau, 0, nbx, 0, nby, 4, 4)
-ex,ey = find_extremum2(tableau,pas,0,0);
-extr.add((ex,ey))
+for i in range(nbx):
+    for j in range(nby):
+        ex,ey = find_extremum2(tableau,pas,i,j)
+        extr.add((ex,ey))
 
 
 
