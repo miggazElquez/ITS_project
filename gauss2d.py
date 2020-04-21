@@ -39,7 +39,7 @@ def find_extremum(tab, pas, x, y):
 
 # Fonction trouvant un extremum au sein du tableau avec un nb maximum d'iteration possibles
 def find_extremum_iter(tab, pas, x, y):
-    max_iter = 20
+    max_iter = 40
     i = 0
     x_max = len(tab) - 1
     y_max = len(tab[0]) - 1
@@ -78,15 +78,15 @@ bassins = [[ 0.0 ]*nbx for j in range(nby)]
 extr = {*()}
 
 # Mise en place des valeurs ainsi que des listes necessaires a la creation de multiples gaussienne 2-dimensionelles
-nb_gaussiennes = 8
+nb_gaussiennes = 10
 # Creation de positions aleatoires de gaussiennes
 mx = [ randint(xmin,xmax)/2 for i in range(nb_gaussiennes) ]
 my = [ randint(ymin,ymax)/2 for i in range(nb_gaussiennes) ]
 # Definition et creation de leurs amplitudes respectives en x et en y
 sxmin=1.0
 symin=1.0
-sxmax=3.0
-symax=3.0
+sxmax=2.0
+symax=2.0
 sx = [ uniform(sxmin,sxmax) for i in range(nb_gaussiennes) ]
 sy = [ uniform(symin,symax) for i in range(nb_gaussiennes) ]
 
@@ -110,6 +110,7 @@ for x,y in extr:
     x_extr.append(x)
     y_extr.append(y)
 
+# Ajout des bassins
 for i in range(nbx):
     for j in range(nby):
         val = 0
@@ -119,6 +120,10 @@ for i in range(nbx):
                 val = 100 * (k+1)
                 break
         bassins[i][j] = val
+
+
+
+
 
 # Finalement, matplotlib est employe dans le but d'afficher les resultats a l'ecran
 
@@ -132,11 +137,9 @@ plt.colorbar()
 plt.plot(x_extr, y_extr,'ro', label='extrema')
 
 # Affichage des bassins d'attraction
-plt.imshow(bassins, extent=[xmin, xmax, ymin, ymax], origin='lower', cmap='gray', alpha=1.5)
+plt.imshow(bassins, extent=[xmin, xmax, ymin, ymax], origin='lower', cmap='Reds', alpha=1.5)
 
-print(set(i for j in bassins for i in j))
 
 # Executer Matplotlib
 plt.legend()
 plt.show()
-
