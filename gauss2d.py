@@ -1,5 +1,5 @@
 from math import *
-from random import randint, random, uniform
+from random import randint, random, uniform, seed
 from pprint import pprint
 import matplotlib.pyplot as plt
 
@@ -39,7 +39,7 @@ def find_extremum(tab, pas, x, y):
 
 # Fonction trouvant un extremum au sein du tableau avec un nb maximum d'iteration possibles
 def find_extremum_iter(tab, pas, x, y):
-    max_iter = 40
+    max_iter = 80
     i = 0
     x_max = len(tab) - 1
     y_max = len(tab[0]) - 1
