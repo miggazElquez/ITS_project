@@ -20,7 +20,8 @@ def gaussienne_2d(x, y, mx, my, sx, sy):
     #b = -( ( (x-mx)/sx )**2 + ( (y-my)/sy )**2 )
     return a * exp(b)
  
-def find_extremum2(tab, pas, x, y):
+# Fonction trouvant un extremum au sein du tableau
+def find_extremum(tab, pas, x, y):
     x_max = len(tab) - 1
     y_max = len(tab[0]) - 1
     while True:
@@ -36,24 +37,27 @@ def find_extremum2(tab, pas, x, y):
             break
     return (y*pas-10, x*pas-10)
 
-# Fonction trouvant un extremum au sein du tableau
-def find_extremum( tab, xmin, xmax, ymin, ymax, x, y):
-   
-    xx =x
-    yy =y
-    dx = 1
-    dy = 1
- 
-    for i in range(200):
-        if x < xmax and x > xmin and y < ymax and y > ymin:
-            dx = tab[x+1][x-1]
-            dy = tab[y+1][y-1]
-
-            xx+= sign(dx)
-            yy+= sign(dy)
-
-    return (xx,yy)
-
+# Fonction trouvant un extremum au sein du tableau avec un nb maximum d'iteration possibles
+def find_extremum_iter(tab, pas, x, y):
+    max_iter = 20
+    i = 0
+    x_max = len(tab) - 1
+    y_max = len(tab[0]) - 1
+    while True:
+        if i == max_iter:
+            break
+        if x < x_max and tab[x][y]<tab[x+1][y]:
+            x+=1
+        elif x > 0 and tab[x][y]<tab[x-1][y]:
+            x-=1
+        elif y < y_max and tab[x][y]<tab[x][y+1]:
+            y+=1
+        elif y > 0 and tab[x][y]<tab[x][y-1]:
+            y-=1
+        else:
+            break
+        i+=1
+    return (y*pas-10, x*pas-10)
 
 # Nous definissons ici le tableau qui va contenir les valeurs pour chaque point (x,y)
 xmin = -10
@@ -61,20 +65,21 @@ xmax = 10
 ymin = -10
 ymax = 10
 
-pas = 0.1
+pas = 0.2
 nbx = int((xmax-xmin)/pas)
 nby = int((ymax-ymin)/pas)
 # Ici, le tableau est initialise
 tableau = [[ 0.0 ]*nbx for j in range(nby)]
 
+# On initialise egalement un tableau de meme dimensions dans le but d'y placer les points appartenant aux bassins d'attractions
+bassins = [[ 0.0 ]*nbx for j in range(nby)]
 
 # Mise en place de l'ensemble contenant les extrema futurs pour x et y
-
-extr = {}
-
+x_extr = []
+y_extr = []
 
 # Mise en place des valeurs ainsi que des listes necessaires a la creation de multiples gaussienne 2-dimensionelles
-nb_gaussiennes = 2
+nb_gaussiennes = 8
 # Creation de positions aleatoires de gaussiennes
 mx = [ randint(xmin,xmax)/2 for i in range(nb_gaussiennes) ]
 my = [ randint(ymin,ymax)/2 for i in range(nb_gaussiennes) ]
@@ -96,21 +101,21 @@ for k in range(nb_gaussiennes):
 
 
 # Ici, on ajoute au dictionnaire des extrema en x et y des extrema generes a partir du tableau
-#ex,ey = find_extremum(tableau, 0, nbx, 0, nby, 4, 4)
 for i in range(nbx):
     for j in range(nby):
-        ex,ey = find_extremum2(tableau,pas,i,j)
-        if (ex,ey) in extr:
-            extr[(ex,ey)][0].append(i)
-            extr[(ex,ey)][1].append(j)
-        else:
-            extr[(ex,ey)] = ([i],[j])
+        ex,ey = find_extremum(tableau,pas,i,j)
+        x_extr.append(ex)
+        y_extr.append(ey)
 
-COLORS = ["green", "cyan","salmon"]
-colors = iter(COLORS)
-
-color = {key:next(colors) for key in extr}
-
+for i in range(nbx):
+    for j in range(nby):
+        val = 0
+        ex,ey = find_extremum_iter(tableau,pas,i,j)
+        for k in range(len(x_extr)):
+            if abs(x_extr[k] - ex)<0.00001  and abs(y_extr[k] - ey)<0.00001:
+                val = 100 * (k+1)
+                break
+        bassins[i][j] = val
 
 # Finalement, matplotlib est employe dans le but d'afficher les resultats a l'ecran
 
@@ -121,12 +126,10 @@ plt.imshow(tableau, extent=[xmin, xmax, ymin, ymax], origin="lower", cmap='Blues
 plt.colorbar()
 
 # Affichage des extrema
-for (x_extr, y_extr),(x_bassin,y_bassin) in extr.items():
-    plt.plot(x_extr, y_extr,'ro', label='extrema')
-    plt.plot(x_bassin, y_bassin,color[(x_extr,y_extr)])
+plt.plot(x_extr, y_extr,'ro', label='extrema')
 
 # Affichage des bassins d'attraction
-#plt.imshow(tableau, extent=[xmin, xmax, ymin, ymax], origin='lower', cmap='RdGy', alpha=1.5)
+plt.imshow(bassins, extent=[xmin, xmax, ymin, ymax], origin='lower', cmap='gray', alpha=1.5)
 
 
 # Executer Matplotlib
