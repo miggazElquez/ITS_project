@@ -3,6 +3,7 @@ from random import randint, random, uniform
 from pprint import pprint
 import matplotlib.pyplot as plt
 
+# Utility function
 def sign(x):
     if x == 0:
         return 0
@@ -11,6 +12,7 @@ def sign(x):
     else:
         return -1
 
+# Fonction generatrice de gaussiennes 2-dimensionelles
 def gaussienne_2d(x, y, mx, my, sx, sy):
     a = 1 / ( 2 * pi * sx * sy )
     #a = 1
@@ -18,36 +20,70 @@ def gaussienne_2d(x, y, mx, my, sx, sy):
     #b = -( ( (x-mx)/sx )**2 + ( (y-my)/sy )**2 )
     return a * exp(b)
 
-def find_extremum( tab, x, y):
-    return (x,y)
+def find_extremum2(tab, pas, x, y):
+    while(tab[x][y]<tab[x+1][y] or tab[x][y]<tab[x-1][y] or tab[x][y]<tab[x][y+1] or tab[x][y]<tab[x][y-1]):
+        if tab[x][y]<tab[x+1][y]:
+            x+=1
+        elif tab[x][y]<tab[x-1][y]:
+            x-=1
+        elif tab[x][y]<tab[x][y+1]:
+            y+=1
+        elif tab[x][y]<tab[x][y-1]:
+            y-=1
+    return (y*pas-10, x*pas-10)
 
-#defining the value grid
+# Fonction trouvant un extremum au sein du tableau
+def find_extremum( tab, xmin, xmax, ymin, ymax, x, y):
+   
+    xx =x
+    yy =y
+    dx = 1
+    dy = 1
+ 
+    for i in range(200):
+        if x < xmax and x > xmin and y < ymax and y > ymin:
+            dx = tab[x+1][x-1]
+            dy = tab[y+1][y-1]
+
+            xx+= sign(dx)
+            yy+= sign(dy)
+
+    return (xx,yy)
+
+
+# Nous definissons ici le tableau qui va contenir les valeurs pour chaque point (x,y)
 xmin = -10
 xmax = 10
 ymin = -10
 ymax = 10
+
 pas = 0.1
 nbx = int((xmax-xmin)/pas)
 nby = int((ymax-ymin)/pas)
-#define value table
+# Ici, le tableau est initialise
 tableau = [[ 0.0 ]*nbx for j in range(nby)]
+
+
+# Mise en place de listes contenant les extrema futurs pour x et y
 x_extr = []
 y_extr = []
-#number of generated gaussian curves
+
+
+# Mise en place des valeurs ainsi que des listes necessaires a la creation de multiples gaussienne 2-dimensionelles
 nb_gaussiennes = 1
+# Creation de positions aleatoires de gaussiennes
 mx = [ randint(xmin,xmax)/2 for i in range(nb_gaussiennes) ]
 my = [ randint(ymin,ymax)/2 for i in range(nb_gaussiennes) ]
-sxmin=4.0
-symin=4.0
-sxmax=4.0
-symax=4.0
+# Definition et creation de leurs amplitudes respectives en x et en y
+sxmin=1.0
+symin=1.0
+sxmax=3.0
+symax=3.0
 sx = [ uniform(sxmin,sxmax) for i in range(nb_gaussiennes) ]
 sy = [ uniform(symin,symax) for i in range(nb_gaussiennes) ]
 
 
-
-
-#loop through the value grid for each generated standard deviation and average and apply the corresponding gaussian function
+# Placement des valeurs generees par les gaussiennes dans le tableau de valeurs
 for k in range(nb_gaussiennes):
     for i in range(nbx):
         for j in range(nby):
@@ -55,24 +91,32 @@ for k in range(nb_gaussiennes):
             tableau[i][j] += gaussienne_2d( xmin+i*pas, ymin + j*pas, mx[k], my[k], sx[k], sy[k] )
 
 
-ex,ey = find_extremum(tableau, 0, 0)
+# Ici, on ajoute aux listes des extrema en x et y des extrema generes a partir du tableau
+#ex,ey = find_extremum(tableau, 0, nbx, 0, nby, 4, 4)
+ex,ey = find_extremum2(tableau,pas,0,0);
 x_extr.append(ex)
 y_extr.append(ey)
 
-#draw the value grid to the screen
+
+
+
+
+
+# Finalement, matplotlib est employe dans le but d'afficher les resultats a l'ecran
+
+# Le tableau de valeurs est dessine a l'ecran
 plt.imshow(tableau, extent=[xmin, xmax, ymin, ymax], origin="lower", cmap='Blues_r', alpha=1)
 
-#add a colorbar so one understands the meaning of the colors
+# Mise en place d'une legende de couleurs
 plt.colorbar()
 
-#plot extrema
+# Affichage des extrema
 plt.plot(x_extr, y_extr,'ro', label='extrema')
 
-
-#draw the second value grid on which the attraction bassins are described
+# Affichage des bassins d'attraction
 #plt.imshow(tableau, extent=[xmin, xmax, ymin, ymax], origin='lower', cmap='RdGy', alpha=1.5)
 
-#show legends
+
+# Executer Matplotlib
 plt.legend()
-#show plot
 plt.show()
